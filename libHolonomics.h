@@ -25,3 +25,55 @@
 #pragma config(Servo,  srvo_S4_C1_4,    servo10,              tServoNone)
 #pragma config(Servo,  srvo_S4_C1_5,    servo11,              tServoNone)
 #pragma config(Servo,  srvo_S4_C1_6,    servo12,              tServoNone)
+
+//functiondef
+/**
+ * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
+ */
+void Stop();
+/**
+ * Moves motors immediately.
+ * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
+ * You should be using addVal(int wA, int wB, int wC, int wD);
+ * @param (int)wA Motor power for wheel A
+ * @param (int)wB Motor power for wheel B
+ * @param (int)wC Motor power for wheel C
+ * @param (int)wD Motor power for wheel D
+ */
+void cDir(int wA, int wB, int wC, int wD);
+/**
+ * Moves motors immediately, and sets basket position.
+ * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
+ * You should be using addVal(int wA, int wB, int wC, int wD);
+ * @param (int)wA Motor power for wheel A
+ * @param (int)wB Motor power for wheel B
+ * @param (int)wC Motor power for wheel C
+ * @param (int)wD Motor power for wheel D
+ * @param (int)lPos Position to send basket servo
+ */
+void cDir(int wA, int wB, int wC, int wD, int lpos);
+/**
+ * Rotates at speed p.
+ * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
+ * You should be using addVal(int wA, int wB, int wC, int wD);
+ * @param (int)p Speed to rotate
+ */
+void rotate(int p);
+
+void addVal(int wA, int wB, int wC, int wD);
+void normalize(int mod2);
+void loadVal();
+void updateServos();
+int igetBasketPos();
+bool bgetBasketPos();
+void setBasketPos(int i);
+void setBasketPos(bool up);
+bool moveConveyor(bool up);
+void deactivateServos();
+void activateServos();
+int getPos();
+void resetPos();
+void moveFlag(int i);
+void liftHook(int i);
+void moveWinch(int i);
+void setHookPos(int i);

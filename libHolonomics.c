@@ -20,7 +20,7 @@ bool conveyorUp=true;//determines if conveyor is up on robot
 bool basketActive=false;
 bool conveyorActive=false;
 bool hookActive=false;
-//stopps everything
+//stops everything
 void Stop(){
 	motor[wheelA]=0;
 	motor[wheelB]=0;
@@ -32,7 +32,7 @@ void Stop(){
 }
 
 //you shouldn't call this directly unless you're testing
-void cDir(int wA, int wB, int wC, int wD){
+void cDir(int wA, int wB, int wC, int wD) {
 	motor[wheelA]=wA;
 	motor[wheelB]=wB;
 	motor[wheelC]=wC;
@@ -41,22 +41,22 @@ void cDir(int wA, int wB, int wC, int wD){
 }
 
 //you shouldn't call this directly unless you're testing
-void cDir(int wA, int wB, int wC, int wD, int lpos){
+void cDir(int wA, int wB, int wC, int wD, int lpos) {
 	motor[wheelA]=wA;
 	motor[wheelB]=wB;
 	motor[wheelC]=wC;
 	motor[wheelD]=wD;
 	servoChangeRate[basket]=5;
-	servo[basket]=b1pos;
+	servo[basket]=lpos;
 	return;
 }
 
 //for testing: rotates in place
-void rotate(int p){
+void rotate(int p) {
 	cDir(p,p,p,p);
 }
 
-void addVal(int wA, int wB, int wC, int wD){
+void addVal(int wA, int wB, int wC, int wD) {
 	if(wA>100){wA=100;}
 	if(wB>100){wB=100;}
 	if(wC>100){wC=100;}
@@ -68,7 +68,7 @@ void addVal(int wA, int wB, int wC, int wD){
 }
 
 //fixes motor values
-void normalize(int mod2){
+void normalize(int mod2) {
 	float mod=((float)abs(mod2))/((float)100);
 	ra*=mod;
 	rb*=mod;
@@ -77,7 +77,7 @@ void normalize(int mod2){
 }
 
 //makes stuff happen
-void loadVal(){
+void loadVal() {
 	if(ra>100){normalize(ra); ra=100;}
 	if(rb>100){normalize(rb);rb=100;}
 	if(rc>100){normalize(rc);rc=100;}
@@ -103,7 +103,7 @@ void loadVal(){
 }
 
 //updates servo values. call once per cycle
-void updateServos(){
+void updateServos() {
 	//moves lift
 	if(basketActive){//checks if the lift servo is activated
 		//if so, move lift
@@ -141,24 +141,24 @@ void updateServos(){
 }
 
 //returns lift position as integer
-int igetBasketPos(){
+int igetBasketPos() {
 	return b1pos;
 }
 
 //returns lift position as boolean (lift up=true)
-bool bgetBasketPos(){
+bool bgetBasketPos() {
 	return (abs(b1pos-200)<10);
 }
 
 //sets lift position
-void setBasketPos(int i){
+void setBasketPos(int i) {
 	b1pos=i;
 	if(b1pos>200){b1pos=200;}
 	if(b1pos<0){b1pos=0;}
 }
 
 //better lift controller: lift can only go up/down
-void setBasketPos(bool up){
+void setBasketPos(bool up) {
 	if(up){
 		b1pos=basketUp;
 		}else{
@@ -167,24 +167,24 @@ void setBasketPos(bool up){
 }
 
 //moves queues conveyor for moving up/down
-bool moveConveyor(bool up){
+bool moveConveyor(bool up) {
 	bool cu=(conveyorUp==up);
 	conveyorUp=up;
 	return cu;
 }
-void deactivateServos(){
+void deactivateServos() {
 	conveyorActive=false;
 	basketActive=false;
 	hookActive=false;
 }
-void activateServos(){
+void activateServos() {
 	conveyorActive=true;
 	basketActive=true;
 	hookActive=true;
 }
 
 //returns encoder
-int getPos(){
+int getPos() {
 	return nMotorEncoder[wheelA];
 }
 int getPos(int i){
@@ -195,27 +195,27 @@ int getPos(int i){
 	}
 }
 //resets encoder
-void resetPos(){
+void resetPos() {
 	nMotorEncoder[wheelA]= 0;
 	nMotorEncoder[wheelC]=0;
 }
 
-//controlls flag motor
-void moveFlag(int i){
+//controls flag motor
+void moveFlag(int i) {
 	motor[flagLift]=i;
 	return;
 }
 
 //controls hook up or down
-void liftHook(int i){
+void liftHook(int i) {
 	motor[hookLift]=i;
 	return;
 }
 
-void moveWinch(int i){
+void moveWinch(int i) {
 	motor[winch]=i;
 	return;
 }
-void setHookPos(int i){
+void setHookPos(int i) {
 	hookPos=i;
 }
