@@ -59,14 +59,53 @@ void cDir(int wA, int wB, int wC, int wD, int lpos);
  * @param (int)p Speed to rotate
  */
 void rotate(int p);
-
+/**
+ * Wow... How do I describe this function?
+ * @param (int)wA
+ * @param (int)wB
+ * @param (int)wC
+ * @param (int)wD
+ */
 void addVal(int wA, int wB, int wC, int wD);
+/**
+ * Multiplies variables ra, rb, rc, and rd by (abs(mod2))/100f to normalize values over 100 while protecting ratios.
+ * This should only really be called by loadVal().
+ * @param mod2 percentage to modify values by.
+ */
 void normalize(int mod2);
+/**
+ * Pushes motor values to motors.
+ * Normalizes values over 100 or under -100, and perserves ratios by using normalize()
+ * Also outputs motor values to 1st 4 lines of display.
+ * Finally resets ra-rd
+ */
 void loadVal();
+
 void updateServos();
+/**
+ * Gets basket position as an integer. Note that the value returned are the theoretical values that are sent to the basket
+ * servo, not the actual values.
+ * @return (int) basket position
+ */
 int igetBasketPos();
+/**
+ * Gets the basket position as an boolean. True means the basket is up, false means it is down. Note that the value returned
+ * are the theoretical values that are sent to the basket servo, not the actual values. Basically just a wrapper for
+ * igetBasketPos();
+ */
 bool bgetBasketPos();
+/**
+ * Sets the basket position. Note that this function will not actually move the basket immediately; you need to call
+ * updateServos() a few times over a sec. to actually move the basket.
+ * @param (int)i new servo position
+ */
 void setBasketPos(int i);
+/**
+ * Sets the basket position. If up==true, then it sets it the basket up, otherwise it sets the basket down. Note that this
+ * function will not actually move the basket immediately; you need to call updateServos() a few times over a sec.
+ * to actually move the basket.
+ * @param (bool)up direction to move basket.
+ */
 void setBasketPos(bool up);
 bool moveConveyor(bool up);
 void deactivateServos();
