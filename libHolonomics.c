@@ -77,7 +77,9 @@ void normalize(int mod2) {
 }
 
 //makes stuff happen
-void loadVal() {
+void loadVal() 
+	int oldA=ra,oldB=rb,oldC=rc,oldD=rd;
+	//normalize values
 	if(ra>100){normalize(ra); ra=100;}
 	if(rb>100){normalize(rb);rb=100;}
 	if(rc>100){normalize(rc);rc=100;}
@@ -86,16 +88,20 @@ void loadVal() {
 	if(rb<-100){normalize(-rb);rb=-100;}
 	if(rc<-100){normalize(-rc);rc=-100;}
 	if(rd<-100){normalize(-rd);rd=-100;}
+	//write values to motor
 	cDir(ra,rb,rc,rd);
 	string t1, t2, t3, t4;
-	StringFormat(t1, "%4d", ra);
-	StringFormat(t2, "%4d", rb);
-	StringFormat(t3, "%4d", rc);
-	StringFormat(t4, "%4d", rd);
+	//build strings
+	StringFormat(t1, "A: %4d -> %4d", oldA, ra);
+	StringFormat(t2, "B: %4d -> %4d", oldB, rb);
+	StringFormat(t3, "C: %4d -> %4d", oldC, rc);
+	StringFormat(t4, "D: %4d -> %4d", oldD, rd);
+	//display motor values
 	nxtDisplayCenteredTextLine(1,t1);
 	nxtDisplayCenteredTextLine(2,t2);
 	nxtDisplayCenteredTextLine(3,t3);
 	nxtDisplayCenteredTextLine(4,t4);
+	//reset motor values
 	ra=0;
 	rb=0;
 	rc=0;
