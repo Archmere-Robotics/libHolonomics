@@ -1,5 +1,9 @@
 #include "libHolonomics.h"
 
+//include guard
+#ifndef _LIBHOLO_C
+#define _LIBHOLO_C
+
 const int convOut=173;
 const int convIn=85;
 const int basketUp=20;
@@ -225,3 +229,4 @@ void moveWinch(int i) {
 void setHookPos(int i) {
 	hookPos=i;
 }
+#endif
