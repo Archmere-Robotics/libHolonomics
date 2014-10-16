@@ -1,3 +1,7 @@
+//include guard
+#ifndef _LIBHOLO_H
+#define _LIBHOLO_H
+
 #pragma config(Hubs,  S2, HTServo,  none,     none,     none)
 #pragma config(Hubs,  S3, HTMotor,  HTMotor,  none,     none)
 #pragma config(Hubs,  S4, HTServo,  HTMotor,  HTMotor,  none)
@@ -116,3 +120,4 @@ void moveFlag(int i);
 void liftHook(int i);
 void moveWinch(int i);
 void setHookPos(int i);
+#endif
