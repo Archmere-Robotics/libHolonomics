@@ -3,11 +3,6 @@
 //include guard
 #ifndef _LIBHOLO_C
 #define _LIBHOLO_C
-
-const int convOut=173;
-const int convIn=85;
-const int basketUp=20;
-const int basketDown=232;
 /*
 @author Liam Feehery
 @awesome
@@ -16,14 +11,16 @@ This is the motor control library written for the FTC competition 'Block Party' 
 It controlls the holonomic drive system for 'BoxBot', and should be applicaple for any holonomic
 drive, if you remove the extra functions.
 */
-int ra, rb, rc, rd=0;//motor values.
-int b1pos=175;//lift value; 175 rests above conveyor
-int hookPos=0;
-bool conveyorUp=true;//determines if conveyor is up on robot
+
+//variable definitions
+b1pos=175;//lift value; 175 rests above conveyor
+hookPos=0;
+conveyorUp=true;//determines if conveyor is up on robot
 //determines if the servos are active
-bool basketActive=false;
-bool conveyorActive=false;
-bool hookActive=false;
+basketActive=false;
+conveyorActive=false;
+hookActive=false;
+
 //stops everything
 void Stop(){
 	motor[wheelA]=0;
