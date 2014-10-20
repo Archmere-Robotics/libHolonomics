@@ -29,8 +29,17 @@
 #pragma config(Servo,  srvo_S4_C1_4,    servo10,              tServoNone)
 #pragma config(Servo,  srvo_S4_C1_5,    servo11,              tServoNone)
 #pragma config(Servo,  srvo_S4_C1_6,    servo12,              tServoNone)
-
-//functiondef
+//vardec
+const int convOut=173;
+const int convIn=85;
+const int basketUp=20;
+const int basketDown=232;
+bool conveyorUp=true;//determines if conveyor is up on robot
+//determines if the servos are active
+bool basketActive;
+bool conveyorActive;
+bool hookActive;
+//functiondec
 /**
  * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
  */
