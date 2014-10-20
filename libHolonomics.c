@@ -3,6 +3,7 @@
 //include guard
 #ifndef _LIBHOLO_C
 #define _LIBHOLO_C
+#define DEBUG_MOTOR_VALUES
 /*
 @author Liam Feehery
 @awesome
@@ -21,34 +22,44 @@ basketActive=false;
 conveyorActive=false;
 hookActive=false;
 
+//internal variable declarations/definitions
+static int ra, rb, rc, rd=0;//motor values.
+static int b1pos=175;//lift value; 175 rests above conveyor
+static int hookPos=0;
+
 //stops everything
 void Stop(){
-	motor[wheelA]=0;
-	motor[wheelB]=0;
-	motor[wheelC]=0;
-	motor[wheelD]=0;
-	basketActive=false;
-	conveyorActive=false;
+	motor[wheelA]  = 0;
+	motor[wheelB]  = 0;
+	motor[wheelC]  = 0;
+	motor[wheelD]  = 0;
+	ra             = 0;
+	rb             = 0;
+	rc             = 0;
+	rd             = 0;
+	basketActive   = false;
+	conveyorActive = false;
+	hookActive     = false;
 	return;
 }
 
 //you shouldn't call this directly unless you're testing
 void cDir(int wA, int wB, int wC, int wD) {
-	motor[wheelA]=wA;
-	motor[wheelB]=wB;
-	motor[wheelC]=wC;
-	motor[wheelD]=wD;
+	motor[wheelA]  = wA;
+	motor[wheelB]  = wB;
+	motor[wheelC]  = wC;
+	motor[wheelD]  = wD;
 	return;
 }
 
 //you shouldn't call this directly unless you're testing
 void cDir(int wA, int wB, int wC, int wD, int lpos) {
-	motor[wheelA]=wA;
-	motor[wheelB]=wB;
-	motor[wheelC]=wC;
-	motor[wheelD]=wD;
-	servoChangeRate[basket]=5;
-	servo[basket]=lpos;
+	motor[wheelA]  = wA;
+	motor[wheelB]  = wB;
+	motor[wheelC]  = wC;
+	motor[wheelD]  = wD;
+	servoChangeRate[basket] = 5;
+	servo[basket]  = lpos;
 	return;
 }
 
@@ -57,52 +68,85 @@ void rotate(int p) {
 	cDir(p,p,p,p);
 }
 
-void addVal(int wA, int wB, int wC, int wD) {
-	if(wA>100){wA=100;}
-	if(wB>100){wB=100;}
-	if(wC>100){wC=100;}
-	if(wD>100){wD=100;}
-	ra=ra + wA;
-	rb=rb + wB;
-	rc=rc + wC;
-	rd=rd + wD;
+void addVal(int wheelA, int wheelB, int wheelC, int wheelD) {
+	if(wheelA>100)
+		wA   = 100;
+	if(wheelB>100)
+		wB   = 100;
+	if(wheelC>100)
+		wC   = 100;
+	if(wheelD>100)
+		wD   = 100;
+	ra = ra + wheelA;
+	rb = rb + wheelB;
+	rc = rc + wheelC;
+	rd = rd + wheelD;
 }
 
 //fixes motor values
 void normalize(int mod2) {
-	float mod=((float)abs(mod2))/((float)100);
-	ra*=mod;
-	rb*=mod;
-	rc*=mod;
-	rd*=mod;
+	float mod    = ((float)abs(mod2))/((float)100);
+	ra *= mod;
+	rb *= mod;
+	rc *= mod;
+	rd *= mod;
 }
 
 //makes stuff happen
-void loadVal() 
-	int oldA=ra,oldB=rb,oldC=rc,oldD=rd;
+void loadVal() {
+	#ifdef DEBUG_MOTOR_VALUES
+		//store values for display later
+		int oldA=ra,oldB=rb,oldC=rc,oldD=rd;
+	#endif
 	//normalize values
-	if(ra>100){normalize(ra); ra=100;}
-	if(rb>100){normalize(rb);rb=100;}
-	if(rc>100){normalize(rc);rc=100;}
-	if(rd>100){normalize(rd);rd=100;}
-	if(ra<-100){normalize(-ra);ra=-100;}
-	if(rb<-100){normalize(-rb);rb=-100;}
-	if(rc<-100){normalize(-rc);rc=-100;}
-	if(rd<-100){normalize(-rd);rd=-100;}
-	//write values to motor
+	if(ra>100){
+		normalize(ra);
+		ra=100;
+	}
+	if(rb>100){
+		normalize(rb);
+		rb=100;
+	}
+	if(rc>100){
+		normalize(rc);
+		rc=100;
+	}
+	if(rd>100){
+		normalize(rd);
+		rd=100;
+	}
+	if(ra<-100){
+		normalize(-ra);
+		ra=-100;
+	}
+	if(rb<-100){
+		normalize(-rb);
+		rb=-100;
+	}
+	if(rc<-100){
+		normalize(-rc);
+		rc=-100;
+	}
+	if(rd<-100){
+		normalize(-rd);
+		rd=-100;
+	}
+	//write values to the motors
 	cDir(ra,rb,rc,rd);
-	string t1, t2, t3, t4;
-	//build strings
-	StringFormat(t1, "A: %4d -> %4d", oldA, ra);
-	StringFormat(t2, "B: %4d -> %4d", oldB, rb);
-	StringFormat(t3, "C: %4d -> %4d", oldC, rc);
-	StringFormat(t4, "D: %4d -> %4d", oldD, rd);
-	//display motor values
-	nxtDisplayCenteredTextLine(1,t1);
-	nxtDisplayCenteredTextLine(2,t2);
-	nxtDisplayCenteredTextLine(3,t3);
-	nxtDisplayCenteredTextLine(4,t4);
-	//reset motor values
+	#ifdef DEBUG_MOTOR_VALUES
+		string t1, t2, t3, t4;
+		//build strings for display
+		StringFormat(t1, "A: %3d -> %3d", oldA, ra);
+		StringFormat(t2, "B: %3d -> %3d", oldB, rb);
+		StringFormat(t3, "C: %3d -> %3d", oldC, rc);
+		StringFormat(t4, "D: %3d -> %3d", oldD, rd);
+		//display motor values to screen
+		nxtDisplayCenteredTextLine(1,t1);
+		nxtDisplayCenteredTextLine(2,t2);
+		nxtDisplayCenteredTextLine(3,t3);
+		nxtDisplayCenteredTextLine(4,t4);
+	#endif
+	//reset theoretical motor values
 	ra=0;
 	rb=0;
 	rc=0;
@@ -116,15 +160,13 @@ void updateServos() {
 		//if so, move lift
 		servoChangeRate[basket]=5;
 		servo[basket]=b1pos;
-		}else{
-		//do absolutely nothing
 	}
 	//move conveyor lift
-	int convTarg;
+	int convTarg;//target for conveyor.
 	//update position for conveyor lift
 	if(conveyorUp){
 		convTarg=convOut;
-		}else{
+	}else{
 		convTarg=convIn;
 	}
 	if(conveyorActive){
@@ -136,8 +178,6 @@ void updateServos() {
 			}else{
 			//kill conveyor lift
 		}
-		}else{
-		//do literally nothing
 	}
 	if(hookActive){
 		if(abs(ServoValue[hook]-hookPos)>2){
@@ -160,15 +200,17 @@ bool bgetBasketPos() {
 //sets lift position
 void setBasketPos(int i) {
 	b1pos=i;
-	if(b1pos>200){b1pos=200;}
-	if(b1pos<0){b1pos=0;}
+	if(b1pos>200)
+		b1pos=200;
+	if(b1pos<0)
+		b1pos=0;
 }
 
 //better lift controller: lift can only go up/down
 void setBasketPos(bool up) {
 	if(up){
 		b1pos=basketUp;
-		}else{
+	}else{
 		b1pos=basketDown;
 	}
 }
@@ -197,7 +239,7 @@ int getPos() {
 int getPos(int i){
 	if(i==1){
 		return nMotorEncoder[wheelA];
-		}else{
+	}else{
 		return nMotorEncoder[wheelC];
 	}
 }
