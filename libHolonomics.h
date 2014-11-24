@@ -1,44 +1,48 @@
-//include guard
-#ifndef _LIBHOLO_H
-#define _LIBHOLO_H
-
-#pragma config(Hubs,  S2, HTServo,  none,     none,     none)
-#pragma config(Hubs,  S3, HTMotor,  HTMotor,  none,     none)
-#pragma config(Hubs,  S4, HTServo,  HTMotor,  HTMotor,  none)
-#pragma config(Sensor, S1,     HTSMUX,         sensorI2CCustom)
+#pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTMotor,  none)
+#pragma config(Hubs,  S2, HTServo,  HTMotor,  none,     none)
+#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S3,     Drivetrain,     sensorI2CMuxController)
-#pragma config(Sensor, S4,     Auxillary,      sensorI2CMuxController)
-#pragma config(Motor,  mtr_S3_C1_1,     wheelA,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S3_C1_2,     wheelB,        tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S3_C2_1,     wheelC,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S3_C2_2,     wheelD,        tmotorTetrix, openLoop, reversed)
-#pragma config(Motor,  mtr_S4_C2_1,     winch,         tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S4_C2_2,     hookLift,      tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S4_C3_1,     conveyorMotor, tmotorTetrix, openLoop)
-#pragma config(Motor,  mtr_S4_C3_2,     flagLift,      tmotorTetrix, openLoop)
-#pragma config(Servo,  srvo_S2_C1_1,    hook,                 tServoStandard)
-#pragma config(Servo,  srvo_S2_C1_2,    servo2,               tServoNone)
+#pragma config(Motor,  motorA,          heartbeat,     tmotorNXT, openLoop, encoder)
+#pragma config(Motor,  motorB,          leftHook,      tmotorNXT, PIDControl, encoder)
+#pragma config(Motor,  motorC,          rightHook,     tmotorNXT, PIDControl, reversed, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     liftRightMotor, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C1_2,     liftLeftMotor, tmotorTetrix, openLoop, reversed)
+#pragma config(Motor,  mtr_S1_C2_1,     wheelB,        tmotorTetrix, PIDControl, driveLeft)
+#pragma config(Motor,  mtr_S1_C2_2,     wheelA,        tmotorTetrix, PIDControl, driveRight)
+#pragma config(Motor,  mtr_S1_C3_1,     collectorMotor, tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S1_C3_2,     motorF,        tmotorTetrix, openLoop)
+#pragma config(Motor,  mtr_S2_C2_1,     wheelC,        tmotorTetrix, PIDControl, driveRight)
+#pragma config(Motor,  mtr_S2_C2_2,     wheelD,        tmotorTetrix, PIDControl, driveLeft)
+#pragma config(Servo,  srvo_S2_C1_1,    dumpServo,            tServoStandard)
+#pragma config(Servo,  srvo_S2_C1_2,    doorServo,            tServoStandard)
 #pragma config(Servo,  srvo_S2_C1_3,    servo3,               tServoNone)
 #pragma config(Servo,  srvo_S2_C1_4,    servo4,               tServoNone)
 #pragma config(Servo,  srvo_S2_C1_5,    servo5,               tServoNone)
 #pragma config(Servo,  srvo_S2_C1_6,    servo6,               tServoNone)
-#pragma config(Servo,  srvo_S4_C1_1,    basket,               tServoStandard)
-#pragma config(Servo,  srvo_S4_C1_2,    conveyorLift,         tServoStandard)
-#pragma config(Servo,  srvo_S4_C1_3,    servo9,               tServoNone)
-#pragma config(Servo,  srvo_S4_C1_4,    servo10,              tServoNone)
-#pragma config(Servo,  srvo_S4_C1_5,    servo11,              tServoNone)
-#pragma config(Servo,  srvo_S4_C1_6,    servo12,              tServoNone)
-//vardec
-const int convOut=173;
-const int convIn=85;
-const int basketUp=20;
-const int basketDown=232;
-bool conveyorUp=true;//determines if conveyor is up on robot
+//include guard
+#ifndef _LIBHOLO_H
+#define _LIBHOLO_H
+//define constants for motors
+#define LIFT_DOWN 0
+#define LIFT_UP_FAST 40
+#define LIFT_UP_SLOW 30
+#define LIFT_STOP 10
+#define DUMPSERVO_FLAT 180//value for the PVC dump servo to be balanced
+#define DUMPSERVO_LEFT 200
+#define DUMPSERVO_RIGHT 160
+#define CONVEYOR_UP 30
+#define CONVEYOR_STOP 0
+#define CONVEYOR_DOWN -5
+#define DOOR_OPEN 250
+#define DOOR_CLOSED 85
 //determines if the servos are active
-bool basketActive;
+int dumpservo_pos;
+bool dumpActive;
+int liftSpeed;
+int conveyorSpeed;
 bool conveyorActive;
-bool hookActive;
+int doorservo_pos;
+bool dooractive;
 //functiondec
 /**
  * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
@@ -100,33 +104,29 @@ void updateServos();
  * servo, not the actual values.
  * @return (int) basket position
  */
-int igetBasketPos();
+int igetLiftSpeed();
 /**
  * Gets the basket position as an boolean. True means the basket is up, false means it is down. Note that the value returned
  * are the theoretical values that are sent to the basket servo, not the actual values. Basically just a wrapper for
  * igetBasketPos();
  */
-bool bgetBasketPos();
-/**
- * Sets the basket position. Note that this function will not actually move the basket immediately; you need to call
- * updateServos() a few times over a sec. to actually move the basket.
+bool bgetLiftSpeed();
+/**TODO: document more
+ * Sets the lift speed.
  * @param (int)i new servo position
  */
-void setBasketPos(int i);
-/**
- * Sets the basket position. If up==true, then it sets it the basket up, otherwise it sets the basket down. Note that this
- * function will not actually move the basket immediately; you need to call updateServos() a few times over a sec.
- * to actually move the basket.
- * @param (bool)up direction to move basket.
+void setLiftSpeed(int i);
+/**TODO: document
+ * Sets the basket position. If up==true, then it sets it the basket up, otherwise it sets the basket down.
+ * @param (int)dir direction to move lift
+ * @param (bool)fast speed to move lift
  */
-void setBasketPos(bool up);
-bool moveConveyor(bool up);
+void setLiftPos(int dir, bool fast);
+bool moveConveyor(int speed);
 void deactivateServos();
 void activateServos();
 int getPos();
 void resetPos();
-void moveFlag(int i);
-void liftHook(int i);
-void moveWinch(int i);
-void setHookPos(int i);
+void holoInit();
+void setDump(int pos);
 #endif

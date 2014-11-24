@@ -13,20 +13,8 @@ It controlls the holonomic drive system for 'BoxBot', and should be applicaple f
 drive, if you remove the extra functions.
 */
 
-//variable definitions
-b1pos=175;//lift value; 175 rests above conveyor
-hookPos=0;
-conveyorUp=true;//determines if conveyor is up on robot
-//determines if the servos are active
-basketActive=false;
-conveyorActive=false;
-hookActive=false;
-
 //internal variable declarations/definitions
 static int ra, rb, rc, rd=0;//motor values.
-static int b1pos=175;//lift value; 175 rests above conveyor
-static int hookPos=0;
-
 //stops everything
 void Stop(){
 	motor[wheelA]  = 0;
@@ -37,9 +25,6 @@ void Stop(){
 	rb             = 0;
 	rc             = 0;
 	rd             = 0;
-	basketActive   = false;
-	conveyorActive = false;
-	hookActive     = false;
 	return;
 }
 
@@ -58,8 +43,8 @@ void cDir(int wA, int wB, int wC, int wD, int lpos) {
 	motor[wheelB]  = wB;
 	motor[wheelC]  = wC;
 	motor[wheelD]  = wD;
-	servoChangeRate[basket] = 5;
-	servo[basket]  = lpos;
+//	servoChangeRate[basket] = 5;
+//	servo[basket]  = lpos;
 	return;
 }
 
@@ -68,19 +53,19 @@ void rotate(int p) {
 	cDir(p,p,p,p);
 }
 
-void addVal(int wheelA, int wheelB, int wheelC, int wheelD) {
-	if(wheelA>100)
-		wA   = 100;
-	if(wheelB>100)
+void addVal(int wA, int wB, int wC, int wD) {
+	if(wA>100)
+		wA = 100;
+	if(wB>100)
 		wB   = 100;
-	if(wheelC>100)
+	if(wC>100)
 		wC   = 100;
-	if(wheelD>100)
+	if(wD>100)
 		wD   = 100;
-	ra = ra + wheelA;
-	rb = rb + wheelB;
-	rc = rc + wheelC;
-	rd = rd + wheelD;
+	ra = ra + wA;
+	rb = rb + wB;
+	rc = rc + wC;
+	rd = rd + wD;
 }
 
 //fixes motor values
@@ -133,13 +118,17 @@ void loadVal() {
 	}
 	//write values to the motors
 	cDir(ra,rb,rc,rd);
+	//now, set other non-drivetrain motors
+	motor[liftLeftMotor]=liftSpeed;
+	motor[liftRightMotor]=liftSpeed;
+	motor[collectorMotor]=conveyorSpeed;
 	#ifdef DEBUG_MOTOR_VALUES
 		string t1, t2, t3, t4;
 		//build strings for display
-		StringFormat(t1, "A: %3d -> %3d", oldA, ra);
-		StringFormat(t2, "B: %3d -> %3d", oldB, rb);
-		StringFormat(t3, "C: %3d -> %3d", oldC, rc);
-		StringFormat(t4, "D: %3d -> %3d", oldD, rd);
+		stringFormat(t1, "A: %3d -> %3d", oldA, ra);
+		stringFormat(t2, "B: %3d -> %3d", oldB, rb);
+		stringFormat(t3, "C: %3d -> %3d", oldC, rc);
+		stringFormat(t4, "D: %3d -> %3d", oldD, rd);
 		//display motor values to screen
 		nxtDisplayCenteredTextLine(1,t1);
 		nxtDisplayCenteredTextLine(2,t2);
@@ -156,80 +145,60 @@ void loadVal() {
 //updates servo values. call once per cycle
 void updateServos() {
 	//moves lift
-	if(basketActive){//checks if the lift servo is activated
+	if(dumpActive){//checks if the lift servo is activated
 		//if so, move lift
-		servoChangeRate[basket]=5;
-		servo[basket]=b1pos;
+		servoChangeRate[dumpServo]=1;
+		servo[dumpServo]=dumpservo_pos+DUMPSERVO_FLAT;
 	}
-	//move conveyor lift
-	int convTarg;//target for conveyor.
-	//update position for conveyor lift
-	if(conveyorUp){
-		convTarg=convOut;
-	}else{
-		convTarg=convIn;
-	}
-	if(conveyorActive){
-		//check if the lift has to be moved
-		if(abs(ServoValue[conveyorLift]-convTarg)>10){
-			//move conveyor lift
-			servo[conveyorLift]=convTarg;
-			servoChangeRate[conveyorLift]=5;
-			}else{
-			//kill conveyor lift
-		}
-	}
-	if(hookActive){
-		if(abs(ServoValue[hook]-hookPos)>2){
-			servo[hook]=hookPos;
-			servoChangeRate[hook]=5;
-		}
+	if(doorActive) {
+		servoChangeRate[doorServo]=5;
+		servo[doorServo]=doorservo_pos;
 	}
 }
 
 //returns lift position as integer
-int igetBasketPos() {
-	return b1pos;
+int igetLiftSpeed() {
+	return liftSpeed;
 }
 
 //returns lift position as boolean (lift up=true)
-bool bgetBasketPos() {
-	return (abs(b1pos-200)<10);
+bool bgetLiftSpeed() {
+	return (liftSpeed>0);
 }
 
 //sets lift position
-void setBasketPos(int i) {
-	b1pos=i;
-	if(b1pos>200)
-		b1pos=200;
-	if(b1pos<0)
-		b1pos=0;
+void setLiftSpeed(int i) {
+	liftSpeed=i;
+	if(liftSpeed>LIFT_UP_FAST)
+		liftSpeed=LIFT_UP_FAST;
+	if(liftSpeed<LIFT_DOWN)
+		liftSpeed=LIFT_DOWN;
 }
 
-//better lift controller: lift can only go up/down
-void setBasketPos(bool up) {
-	if(up){
-		b1pos=basketUp;
-	}else{
-		b1pos=basketDown;
-	}
+//better lift controller: lift can only go up/down/stop
+//dir can be: >0 (up), <0 (down) or 0 (stop)
+void setLiftPos(int dir,bool fast) {
+	if(dir>0)
+		liftSpeed=fast?LIFT_UP_FAST:LIFT_UP_SLOW;
+	else if(dir<0)
+		liftSpeed=LIFT_DOWN;
+	else
+		liftSpeed=LIFT_STOP;
 }
 
 //moves queues conveyor for moving up/down
-bool moveConveyor(bool up) {
-	bool cu=(conveyorUp==up);
-	conveyorUp=up;
-	return cu;
+bool moveConveyor(int speed) {
+	conveyorSpeed=speed;
+	return true;
 }
 void deactivateServos() {
 	conveyorActive=false;
-	basketActive=false;
-	hookActive=false;
+	dumpActive=false;
 }
 void activateServos() {
 	conveyorActive=true;
-	basketActive=true;
-	hookActive=true;
+	dumpActive=true;
+	doorActive=true;
 }
 
 //returns encoder
@@ -248,24 +217,10 @@ void resetPos() {
 	nMotorEncoder[wheelA]= 0;
 	nMotorEncoder[wheelC]=0;
 }
-
-//controls flag motor
-void moveFlag(int i) {
-	motor[flagLift]=i;
-	return;
+void setDump(int pos) {
+	dumpservo_pos=pos;
 }
-
-//controls hook up or down
-void liftHook(int i) {
-	motor[hookLift]=i;
-	return;
-}
-
-void moveWinch(int i) {
-	motor[winch]=i;
-	return;
-}
-void setHookPos(int i) {
-	hookPos=i;
+void setDoorPos(bool open) {
+	doorservo_pos=(open?DOOR_OPEN:DOOR_CLOSED);
 }
 #endif
