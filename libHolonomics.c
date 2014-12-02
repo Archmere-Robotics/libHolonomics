@@ -49,9 +49,11 @@ void cDir(int wA, int wB, int wC, int wD, int lpos) {
 }
 
 //for testing: rotates in place
+#if defined(USING_rotate) || defined(HOLO_DEBUG)
 void rotate(int p) {
 	cDir(p,p,p,p);
 }
+#endif
 
 void addVal(int wA, int wB, int wC, int wD) {
 	if(wA>100)
@@ -70,7 +72,7 @@ void addVal(int wA, int wB, int wC, int wD) {
 
 //fixes motor values
 void normalize(int mod2) {
-	float mod    = ((float)abs(mod2))/((float)100);
+	float mod    = ((float)abs(mod2))/MOTOR_MAX;
 	ra *= mod;
 	rb *= mod;
 	rc *= mod;
@@ -84,58 +86,52 @@ void loadVal() {
 		int oldA=ra,oldB=rb,oldC=rc,oldD=rd;
 	#endif
 	//normalize values
-	if(ra>100){
+	if(ra>MOTOR_MAX) {
 		normalize(ra);
-		ra=100;
+		ra=MOTOR_MAX;
 	}
-	if(rb>100){
+	if(rb>MOTOR_MAX) {
 		normalize(rb);
-		rb=100;
+		rb=MOTOR_MAX;
 	}
-	if(rc>100){
+	if(rc>MOTOR_MAX) {
 		normalize(rc);
-		rc=100;
+		rc=MOTOR_MAX;
 	}
-	if(rd>100){
+	if(rd>MOTOR_MAX) {
 		normalize(rd);
-		rd=100;
+		rd=MOTOR_MAX;
 	}
-	if(ra<-100){
+	if(ra<-MOTOR_MAX) {
 		normalize(-ra);
-		ra=-100;
+		ra=-MOTOR_MAX;
 	}
-	if(rb<-100){
+	if(rb<-MOTOR_MAX) {
 		normalize(-rb);
 		rb=-100;
 	}
-	if(rc<-100){
+	if(rc<-MOTOR_MAX) {
 		normalize(-rc);
-		rc=-100;
+		rc=-MOTOR_MAX;
 	}
-	if(rd<-100){
+	if(rd<-MOTOR_MAX) {
 		normalize(-rd);
-		rd=-100;
+		rd=-MOTOR_MAX;
 	}
 	//write values to the motors
 	cDir(ra,rb,rc,rd);
 	//now, set other non-drivetrain motors
-	motor[liftLeftMotor]=liftSpeed;
-	motor[liftRightMotor]=liftSpeed;
+	if(!liftAuto)
+		motor[liftMotor]=liftSpeed;
 	motor[collectorMotor]=conveyorSpeed;
 	#ifdef DEBUG_MOTOR_VALUES
-		string t1, t2, t3, t4;
-		//build strings for display
-		stringFormat(t1, "A: %3d -> %3d", oldA, ra);
-		stringFormat(t2, "B: %3d -> %3d", oldB, rb);
-		stringFormat(t3, "C: %3d -> %3d", oldC, rc);
-		stringFormat(t4, "D: %3d -> %3d", oldD, rd);
 		//display motor values to screen
-		nxtDisplayCenteredTextLine(1,t1);
-		nxtDisplayCenteredTextLine(2,t2);
-		nxtDisplayCenteredTextLine(3,t3);
-		nxtDisplayCenteredTextLine(4,t4);
+		nxtDisplayCenteredTextLine(1,"A: %3d -> %3d",oldA,ra);
+		nxtDisplayCenteredTextLine(2,"B: %3d -> %3d",oldB,rb);
+		nxtDisplayCenteredTextLine(3,"C: %3d -> %3d",oldC,rc);
+		nxtDisplayCenteredTextLine(4,"D: %3d -> %3d",oldD,rd);
 	#endif
-	//reset theoretical motor values
+	//reset internal motor values
 	ra=0;
 	rb=0;
 	rc=0;
@@ -144,7 +140,7 @@ void loadVal() {
 
 //updates servo values. call once per cycle
 void updateServos() {
-	//moves lift
+	//move dump
 	if(dumpActive){//checks if the lift servo is activated
 		//if so, move lift
 		servoChangeRate[dumpServo]=1;
@@ -154,29 +150,45 @@ void updateServos() {
 		servoChangeRate[doorServo]=5;
 		servo[doorServo]=doorservo_pos;
 	}
+	if(liftAuto) {
+		int liftPos=nMotorEncoder[liftMotor];
+		if(liftPos<(liftTarget-50))
+			motor[liftMotor]=LIFT_UP_FAST;
+		else if(liftPos<(liftTarget-10))
+			motor[liftMotor]=LIFT_UP_SLOW;
+		else if(liftPos>(liftTarget+10))
+			motor[liftMotor]=LIFT_DOWN;
+	}
 }
 
 //returns lift position as integer
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_igetLiftSpeed)
 int igetLiftSpeed() {
 	return liftSpeed;
 }
-
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_bgetLiftSpeed)
 //returns lift position as boolean (lift up=true)
 bool bgetLiftSpeed() {
 	return (liftSpeed>0);
 }
+#endif
 
 //sets lift position
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftSpeed)
 void setLiftSpeed(int i) {
 	liftSpeed=i;
 	if(liftSpeed>LIFT_UP_FAST)
 		liftSpeed=LIFT_UP_FAST;
 	if(liftSpeed<LIFT_DOWN)
 		liftSpeed=LIFT_DOWN;
+	liftAuto=false;
 }
+#endif
 
 //better lift controller: lift can only go up/down/stop
 //dir can be: >0 (up), <0 (down) or 0 (stop)
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftPos)
 void setLiftPos(int dir,bool fast) {
 	if(dir>0)
 		liftSpeed=fast?LIFT_UP_FAST:LIFT_UP_SLOW;
@@ -185,23 +197,31 @@ void setLiftPos(int dir,bool fast) {
 	else
 		liftSpeed=LIFT_STOP;
 }
+#endif
 
 //moves queues conveyor for moving up/down
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_moveConveyor)
 bool moveConveyor(int speed) {
 	conveyorSpeed=speed;
 	return true;
 }
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_deactivateServos)
 void deactivateServos() {
 	conveyorActive=false;
 	dumpActive=false;
 }
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_activateServos)
 void activateServos() {
 	conveyorActive=true;
 	dumpActive=true;
 	doorActive=true;
 }
+#endif
 
 //returns encoder
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_getPos)
 int getPos() {
 	return nMotorEncoder[wheelA];
 }
@@ -212,15 +232,32 @@ int getPos(int i){
 		return nMotorEncoder[wheelC];
 	}
 }
+#endif
 //resets encoder
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_resetPos)
 void resetPos() {
 	nMotorEncoder[wheelA]= 0;
 	nMotorEncoder[wheelC]=0;
 }
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setDump)
 void setDump(int pos) {
 	dumpservo_pos=pos;
 }
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setDoorPos)
 void setDoorPos(bool open) {
 	doorservo_pos=(open?DOOR_OPEN:DOOR_CLOSED);
 }
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftTarget)
+void setLiftTarget(unsigned int target) {
+	liftTarget=target;
+}
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftAuto)
+void setLiftAuto(bool aflag){
+	liftAuto=aflag;
+}
+#endif
 #endif
