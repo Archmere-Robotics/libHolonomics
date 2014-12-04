@@ -3,7 +3,7 @@
 #define _LIBHOLO_H
 //define constants for motors
 #define LIFT_DOWN -15
-#define LIFT_UP_FAST 50
+#define LIFT_UP_FAST 100
 #define LIFT_UP_SLOW 25
 #define LIFT_STOP 0
 #define DUMPSERVO_FLAT 180//value for the PVC dump servo to be balanced
@@ -12,8 +12,8 @@
 #define CONVEYOR_UP 30
 #define CONVEYOR_STOP 0
 #define CONVEYOR_DOWN -5
-#define DOOR_OPEN 250
-#define DOOR_CLOSED 85
+#define DOOR_OPEN 240
+#define DOOR_CLOSED 75
 const float	MOTOR_MAX = 100.0;
 //determines if the servos are active
 int dumpservo_pos;
@@ -134,5 +134,8 @@ void setDump(int pos);
 #endif
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftTarget)
 void setLiftTarget(unsigned int target);
+#endif
+#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftAuto)
+void setLiftAuto(bool aflag);
 #endif
 #endif

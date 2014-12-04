@@ -152,12 +152,15 @@ void updateServos() {
 	}
 	if(liftAuto) {
 		int liftPos=nMotorEncoder[liftMotor];
-		if(liftPos<(liftTarget-50))
-			motor[liftMotor]=LIFT_UP_FAST;
-		else if(liftPos<(liftTarget-10))
-			motor[liftMotor]=LIFT_UP_SLOW;
-		else if(liftPos>(liftTarget+10))
-			motor[liftMotor]=LIFT_DOWN;
+		int spd=LIFT_STOP;
+		if(abs(liftPos-liftTarget)>10){
+			spd= ((liftTarget-liftPos));
+			if(spd<LIFT_DOWN)spd=LIFT_DOWN;
+			if(spd>70)spd=70;
+			motor[liftMotor]=spd;
+			nxtDisplayCenteredTextLine(3,"%d",spd);
+		}
+		motor[liftMotor]=spd;
 	}
 }
 
