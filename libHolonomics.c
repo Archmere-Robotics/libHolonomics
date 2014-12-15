@@ -6,11 +6,11 @@
 #define DEBUG_MOTOR_VALUES
 /*
 @author Liam Feehery
-@awesome
+@awesomeBoxBot', and should be applicaple for any holonomic
+drive, if you remove the extra functions.
 @version ß1.1.1
 This is the motor control library written for the FTC competition 'Block Party' (2013-2014 season).
-It controlls the holonomic drive system for 'BoxBot', and should be applicaple for any holonomic
-drive, if you remove the extra functions.
+It controlls the holonomic drive system for '
 */
 
 //internal variable declarations/definitions

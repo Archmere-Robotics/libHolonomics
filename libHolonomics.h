@@ -3,15 +3,15 @@
 #define _LIBHOLO_H
 //define constants for motors
 #define LIFT_DOWN -15
-#define LIFT_UP_FAST 100
+#define LIFT_UP_FAST 50
 #define LIFT_UP_SLOW 25
 #define LIFT_STOP 0
-#define DUMPSERVO_FLAT 180//value for the PVC dump servo to be balanced
+#define DUMPSERVO_FLAT 170//value for the PVC dump servo to be balanced
 #define DUMPSERVO_LEFT 200
 #define DUMPSERVO_RIGHT 160
 #define CONVEYOR_UP 30
 #define CONVEYOR_STOP 0
-#define CONVEYOR_DOWN -5
+#define CONVEYOR_DOWN -30
 #define DOOR_OPEN 240
 #define DOOR_CLOSED 75
 const float	MOTOR_MAX = 100.0;
