@@ -6,23 +6,24 @@
 #define LIFT_UP_FAST 50
 #define LIFT_UP_SLOW 25
 #define LIFT_STOP 0
-#define DUMPSERVO_FLAT 170//value for the PVC dump servo to be balanced
-#define DUMPSERVO_LEFT 200
+#define DUMPSERVO_FLAT 180//value for the PVC dump servo to be balanced
 #define DUMPSERVO_RIGHT 160
 #define CONVEYOR_UP 30
 #define CONVEYOR_STOP 0
 #define CONVEYOR_DOWN -30
-#define DOOR_OPEN 240
-#define DOOR_CLOSED 75
+#define RIGHT_SERVO_POS 270
+#define LEFT_SERVO_POS -280
+#define SWEEPER_POWER 100
+#define HOOK_POWER	30
 const float	MOTOR_MAX = 100.0;
 //determines if the servos are active
 int dumpservo_pos;
 bool dumpActive;
 int liftSpeed;
 int conveyorSpeed;
-bool conveyorActive;
-int doorservo_pos;
-bool doorActive;
+bool conveyorActive;;
+bool leftIRActive;
+bool rightIRActive;
 unsigned int liftTarget;
 bool liftAuto;
 //functiondec
@@ -40,17 +41,7 @@ void Stop();
  * @param (int)wD Motor power for wheel D
  */
 void cDir(int wA, int wB, int wC, int wD);
-/**
- * Moves motors immediately, and sets basket position.
- * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
- * You should be using addVal(int wA, int wB, int wC, int wD);
- * @param (int)wA Motor power for wheel A
- * @param (int)wB Motor power for wheel B
- * @param (int)wC Motor power for wheel C
- * @param (int)wD Motor power for wheel D
- * @param (int)lPos Position to send basket servo
- */
-void cDir(int wA, int wB, int wC, int wD, int lpos);
+
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_rotate)
 /**
  * Rotates at speed p.

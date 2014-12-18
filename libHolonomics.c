@@ -37,17 +37,6 @@ void cDir(int wA, int wB, int wC, int wD) {
 	return;
 }
 
-//you shouldn't call this directly unless you're testing
-void cDir(int wA, int wB, int wC, int wD, int lpos) {
-	motor[wheelA]  = wA;
-	motor[wheelB]  = wB;
-	motor[wheelC]  = wC;
-	motor[wheelD]  = wD;
-//	servoChangeRate[basket] = 5;
-//	servo[basket]  = lpos;
-	return;
-}
-
 //for testing: rotates in place
 #if defined(USING_rotate) || defined(HOLO_DEBUG)
 void rotate(int p) {
@@ -146,9 +135,13 @@ void updateServos() {
 		servoChangeRate[dumpServo]=1;
 		servo[dumpServo]=dumpservo_pos+DUMPSERVO_FLAT;
 	}
-	if(doorActive) {
-		servoChangeRate[doorServo]=5;
-		servo[doorServo]=doorservo_pos;
+	if(rightIRActive) {
+		servoChangeRate[rightIRServo]=5;
+		servo[rightIRServo]=RIGHT_SERVO_POS;
+	}
+	if(leftIRActive){
+		servoChangeRate[leftIRServo]=5;
+		servo[leftIRServo]=LEFT_SERVO_POS;
 	}
 	if(liftAuto) {
 		int liftPos=nMotorEncoder[liftMotor];
@@ -219,7 +212,8 @@ void deactivateServos() {
 void activateServos() {
 	conveyorActive=true;
 	dumpActive=true;
-	doorActive=true;
+	rightIRActive=true;
+	leftIRActive=true;
 }
 #endif
 
@@ -249,9 +243,9 @@ void setDump(int pos) {
 }
 #endif
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setDoorPos)
-void setDoorPos(bool open) {
-	doorservo_pos=(open?DOOR_OPEN:DOOR_CLOSED);
-}
+//void setDoorPos(bool open) {
+//	doorservo_pos=(open?DOOR_OPEN:DOOR_CLOSED);
+//}
 #endif
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftTarget)
 void setLiftTarget(unsigned int target) {
