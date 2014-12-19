@@ -4,7 +4,8 @@
 
 
 //some nice constants; this part should be in it's own file, but I'm lazy...
-#ifndef INT_MIN
+#if 0==1
+//#ifndef INT_MIN
   #define INT_MIN -32767
   #define INT_MAX 32767
 #endif
@@ -15,9 +16,9 @@
 	#define lround(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
 #endif
 #if defined(INT_MIN) && defined(INT_MAX)
-	#define iround(x) ((x) < INT_MIN-0.5 || (x) > INT_MAX+0.5 ?\error() : ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+#define iround(x) ((x) < INT_MIN-0.5 || (x) > INT_MAX+0.5 ?\error() : ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #else
-	#define iround(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
+#define iround(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #endif
 
 
@@ -42,7 +43,7 @@ int dumpservo_pos;
 bool dumpActive;
 int liftSpeed;
 int conveyorSpeed;
-bool conveyorActive;;
+bool conveyorActive;
 bool leftIRActive;
 bool rightIRActive;
 unsigned int liftTarget;
@@ -61,11 +62,9 @@ void Stop();
  * @param (int)wC Motor power for wheel C
  * @param (int)wD Motor power for wheel D
  */
-<<<<<<< HEAD
 void cDir(int wA, int wB, int wC, int wD);
 
-=======
-void cDir(float wA, float wB, float wC, float wD);
+//void cDir(float wA, float wB, float wC, float wD);
 /**
  * Moves motors immediately, and sets basket position.
  * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
@@ -76,8 +75,8 @@ void cDir(float wA, float wB, float wC, float wD);
  * @param (int)wD Motor power for wheel D
  * @param (int)lPos Position to send basket servo
  */
-void cDir(int wA, int wB, int wC, int wD, int lpos);
->>>>>>> origin/master
+//void cDir(int wA, int wB, int wC, int wD, int lpos);
+
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_rotate)
 /**
  * Rotates at speed p.
@@ -94,13 +93,13 @@ void rotate(int p);
  * @param (int)wC
  * @param (int)wD
  */
-void addVal(float wA, float wB, float wC, float wD);
+void addVal(int wA, int wB, int wC, int wD);
 /**
  * Multiplies variables ra, rb, rc, and rd by (abs(mod2))/100f to normalize values over 100 while protecting ratios.
  * This should only really be called by loadVal().
  * @param mod2 percentage to modify values by.
  */
-void normalize(float mod2);
+int normalize(int mod2);
 /**
  * Pushes motor values to motors.
  * Normalizes values over 100 or under -100, and perserves ratios by using normalize()

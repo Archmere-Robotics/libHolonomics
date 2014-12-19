@@ -60,12 +60,14 @@ void addVal(int wA, int wB, int wC, int wD) {
 }
 
 //fixes motor values
-void normalize(int mod2) {
+int normalize(int mod2) {
+	if(abs(mod2)<MOTOR_MAX)return mod2;
 	float mod    = ((float)abs(mod2))/MOTOR_MAX;
 	ra *= mod;
 	rb *= mod;
 	rc *= mod;
 	rd *= mod;
+	return mod2>0?MOTOR_MAX:-MOTOR_MAX;
 }
 
 //makes stuff happen
@@ -75,38 +77,10 @@ void loadVal() {
 		int oldA=ra,oldB=rb,oldC=rc,oldD=rd;
 	#endif
 	//normalize values
-	if(ra>MOTOR_MAX) {
-		normalize(ra);
-		ra=MOTOR_MAX;
-	}
-	if(rb>MOTOR_MAX) {
-		normalize(rb);
-		rb=MOTOR_MAX;
-	}
-	if(rc>MOTOR_MAX) {
-		normalize(rc);
-		rc=MOTOR_MAX;
-	}
-	if(rd>MOTOR_MAX) {
-		normalize(rd);
-		rd=MOTOR_MAX;
-	}
-	if(ra<-MOTOR_MAX) {
-		normalize(-ra);
-		ra=-MOTOR_MAX;
-	}
-	if(rb<-MOTOR_MAX) {
-		normalize(-rb);
-		rb=-100;
-	}
-	if(rc<-MOTOR_MAX) {
-		normalize(-rc);
-		rc=-MOTOR_MAX;
-	}
-	if(rd<-MOTOR_MAX) {
-		normalize(-rd);
-		rd=-MOTOR_MAX;
-	}
+	ra=normalize(ra);
+	rb=normalize(rb);
+	rc=normalize(rc);
+	rd=normalize(rd);
 	//write values to the motors
 	cDir(ra,rb,rc,rd);
 	//now, set other non-drivetrain motors
