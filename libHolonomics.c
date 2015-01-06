@@ -129,6 +129,8 @@ void updateServos() {
 		}
 		motor[liftMotor]=spd;
 	}
+	servoChangeRate[rightHook]=5;
+	servo[rightHook]=rightHookPos;
 }
 
 //returns lift position as integer
@@ -229,6 +231,14 @@ void setLiftTarget(unsigned int target) {
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftAuto)
 void setLiftAuto(bool aflag){
 	liftAuto=aflag;
+}
+#endif
+#if defined(USING_ALL) || defined (USING_setRightHook)
+void setRightHook(int pos) {
+	rightHookPos=pos;
+}
+void setRightHook(bool up) {
+	rightHookPos=up?RIGHT_HOOK_UP:RIGHT_HOOK_DOWN;
 }
 #endif
 #endif

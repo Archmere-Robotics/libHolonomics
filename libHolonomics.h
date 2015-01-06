@@ -37,6 +37,8 @@
 #define LEFT_SERVO_POS -280
 #define SWEEPER_POWER 100
 #define HOOK_POWER	30
+#define RIGHT_HOOK_UP 100
+#define RIGHT_HOOK_DOWN 30
 const float	MOTOR_MAX = 100.0;
 //determines if the servos are active
 int dumpservo_pos;
@@ -48,6 +50,7 @@ bool leftIRActive;
 bool rightIRActive;
 unsigned int liftTarget;
 bool liftAuto;
+int rightHookPos;
 //functiondec
 /**
  * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
@@ -125,14 +128,14 @@ int igetLiftSpeed();
  */
 bool bgetLiftSpeed();
 #endif
-#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftSpeed)
+#if defined(USING_ALL) || defined(USING_setLiftSpeed)
 /**TODO: document more
  * Sets the lift speed.
  * @param (int)i new servo position
  */
 void setLiftSpeed(int i);
 #endif
-#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftPos)
+#if defined(USING_ALL) || defined(USING_setLiftPos)
 /**TODO: document
  * Sets the basket position. If up==true, then it sets it the basket up, otherwise it sets the basket down.
  * @param (int)dir direction to move lift
@@ -140,7 +143,7 @@ void setLiftSpeed(int i);
  */
 void setLiftPos(int dir, bool fast);
 #endif
-#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_moveConveyor)
+#if  defined(USING_ALL) || defined(USING_moveConveyor)
 bool moveConveyor(int speed);
 #endif
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_deactivateServos)
@@ -163,5 +166,9 @@ void setLiftTarget(unsigned int target);
 #endif
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_setLiftAuto)
 void setLiftAuto(bool aflag);
+#endif
+#if defined(USING_ALL) || defined(USING_setRightHook)
+void setRightHook(int pos);
+void setRightHook(bool up);
 #endif
 #endif
