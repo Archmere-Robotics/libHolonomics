@@ -3,7 +3,6 @@
 //include guard
 #ifndef _LIBHOLO_C
 #define _LIBHOLO_C
-#define DEBUG_MOTOR_VALUES
 /*
 @author Liam Feehery
 @awesomeBoxBot', and should be applicaple for any holonomic
@@ -45,14 +44,6 @@ void rotate(int p) {
 #endif
 
 void addVal(int wA, int wB, int wC, int wD) {
-	if(wA>100)
-		wA = 100;
-	if(wB>100)
-		wB   = 100;
-	if(wC>100)
-		wC   = 100;
-	if(wD>100)
-		wD   = 100;
 	ra = ra + wA;
 	rb = rb + wB;
 	rc = rc + wC;
@@ -62,13 +53,42 @@ void addVal(int wA, int wB, int wC, int wD) {
 //fixes motor values
 int normalize(int mod2) {
 	if(abs(mod2)<MOTOR_MAX)return mod2;
-	float mod    = ((float)abs(mod2))/MOTOR_MAX;
+	float mod = MOTOR_MAX/((float)abs(mod2));
 	ra *= mod;
 	rb *= mod;
 	rc *= mod;
 	rd *= mod;
 	return mod2>0?MOTOR_MAX:-MOTOR_MAX;
 }
+#ifdef AWD
+void applyAWD() {
+	ra+=rotationOffset-vecX-vecY;
+	rb+=rotationOffset+vecX-vecY;
+	rc+=rotationOffset+vecX+vecY;
+	rd+=rotationOffset-vecX+vecY;
+	//now, update offset/vector
+	int dRotation=nMotorEncoder[wheelA]+nMotorEncoder[wheelB]+nMotorEncoder[wheelC]+nMotorEncoder[wheelD];
+	int dx=-nMotorEncoder[wheelA]+nMotorEncoder[wheelB]+nMotorEncoder[wheelC]-nMotorEncoder[wheelD];
+	int dy=-nMotorEncoder[wheelA]-nMotorEncoder[wheelB]+nMotorEncoder[wheelC]+nMotorEncoder[wheelD];
+	int aRotation=ra+rb+rc+rd;
+	int ax=-ra+rb+rc-rd;
+	int ay=-ra-rb+rc+rd;
+	#ifdef DEBUG_AWD
+		bDisplayDiagnostics=false;
+		eraseDisplay();
+	//	drawLine(50,32,50+(ax/8),32+(ay/12));
+	//	drawLine(50,63,50+(aRotation/8),32);
+	//	drawLine(50,32,50+(dx/8),32+(dy/12));
+	//	drawLine(50,0,50+(dRotation/8),32);
+		drawLine(33,32,33,32+(dy/6));
+		drawLine(66,32,66,32+(dy/6));
+	#endif
+	nMotorEncoder[wheelA]=0;
+	nMotorEncoder[wheelB]=0;
+	nMotorEncoder[wheelC]=0;
+	nMotorEncoder[wheelD]=0;
+}
+#endif
 
 //makes stuff happen
 void loadVal() {
@@ -81,6 +101,9 @@ void loadVal() {
 	rb=normalize(rb);
 	rc=normalize(rc);
 	rd=normalize(rd);
+	#ifdef AWD
+		applyAWD();
+	#endif
 	//write values to the motors
 	cDir(ra,rb,rc,rd);
 	//now, set other non-drivetrain motors
@@ -108,24 +131,29 @@ void updateServos() {
 		//if so, move lift
 		servoChangeRate[dumpServo]=1;
 		servo[dumpServo]=dumpservo_pos+DUMPSERVO_FLAT;
-	}
+	}else
+		servoChangeRate[dumpServo]=0;
 	if(rightIRActive) {
 		servoChangeRate[rightIRServo]=5;
 		servo[rightIRServo]=RIGHT_SERVO_POS;
-	}
+	}else
+		servoChangeRate[rightIRServo]=0;
 	if(leftIRActive){
 		servoChangeRate[leftIRServo]=5;
 		servo[leftIRServo]=LEFT_SERVO_POS;
-	}
+	}else
+		servoChangeRate[leftIRServo]=0;
 	if(liftAuto) {
 		int liftPos=nMotorEncoder[liftMotor];
 		int spd=LIFT_STOP;
 		if(abs(liftPos-liftTarget)>10){
-			spd= ((liftTarget-liftPos));
-			if(spd<LIFT_DOWN)spd=LIFT_DOWN;
-			if(spd>70)spd=70;
+			spd = ((liftTarget-liftPos));
+			if(spd<LIFT_DOWN)
+				spd = LIFT_DOWN;
+			if(spd>70)
+				spd = 70;
 			motor[liftMotor]=spd;
-			nxtDisplayCenteredTextLine(3,"%d",spd);
+			displayCenteredTextLine(3,"%d",spd);
 		}
 		motor[liftMotor]=spd;
 	}
@@ -199,11 +227,17 @@ int getPos() {
 	return nMotorEncoder[wheelA];
 }
 int getPos(int i){
-	if(i==1){
-		return nMotorEncoder[wheelA];
-	}else{
-		return nMotorEncoder[wheelC];
+	switch(i)	{
+		case 1:
+			return nMotorEncoder[wheelA];
+		case 2:
+			return nMotorEncoder[wheelB];
+		case 3:
+			return nMotorEncoder[wheelC];
+		case 4:
+			return nMotorEncoder[wheelD];
 	}
+	return 0;
 }
 #endif
 //resets encoder

@@ -37,8 +37,8 @@
 #define LEFT_SERVO_POS 31
 #define SWEEPER_POWER 100
 #define HOOK_POWER	30
-#define RIGHT_HOOK_UP 100
-#define RIGHT_HOOK_DOWN 30
+#define RIGHT_HOOK_UP 99
+#define RIGHT_HOOK_DOWN 29
 const float	MOTOR_MAX = 100.0;
 //determines if the servos are active
 int dumpservo_pos;
@@ -51,6 +51,10 @@ bool rightIRActive;
 unsigned int liftTarget;
 bool liftAuto;
 int rightHookPos;
+#ifdef AWD
+//for corrective drive
+int vecX, vecY, rotationOffset;
+#endif
 //functiondec
 /**
  * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
