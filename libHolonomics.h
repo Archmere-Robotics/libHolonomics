@@ -24,7 +24,7 @@
 
 
 //define constants for motors
-#define LIFT_DOWN -15
+#define LIFT_DOWN -20
 #define LIFT_UP_FAST 50
 #define LIFT_UP_SLOW 25
 #define LIFT_STOP 0
