@@ -28,8 +28,8 @@
 #define LIFT_UP_FAST 50
 #define LIFT_UP_SLOW 25
 #define LIFT_STOP 0
-#define DUMPSERVO_FLAT 180//value for the PVC dump servo to be balanced
-#define DUMPSERVO_RIGHT 160
+#define DUMPSERVO_FLAT 178//value for the PVC dump servo to be slightly tilted left
+#define DUMPSERVO_RIGHT 148
 #define CONVEYOR_UP 30
 #define CONVEYOR_STOP 0
 #define CONVEYOR_DOWN -30
@@ -37,8 +37,8 @@
 #define LEFT_SERVO_POS 31
 #define SWEEPER_POWER 100
 #define HOOK_POWER	30
-#define RIGHT_HOOK_UP 99
-#define RIGHT_HOOK_DOWN 29
+#define RIGHT_HOOK_UP 111
+#define RIGHT_HOOK_DOWN 33
 const float	MOTOR_MAX = 100.0;
 //determines if the servos are active
 int dumpservo_pos;
