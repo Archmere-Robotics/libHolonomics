@@ -28,7 +28,7 @@
 #define LIFT_UP_FAST 50
 #define LIFT_UP_SLOW 25
 #define LIFT_STOP 0
-#define DUMPSERVO_FLAT 178//value for the PVC dump servo to be slightly tilted left
+#define DUMPSERVO_FLAT 168//value for the PVC dump servo to be flat
 #define DUMPSERVO_RIGHT 148
 #define CONVEYOR_UP 30
 #define CONVEYOR_STOP 0

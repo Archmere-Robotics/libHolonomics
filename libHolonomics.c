@@ -134,15 +134,15 @@ void updateServos() {
 	}else
 		servoChangeRate[dumpServo]=0;
 	if(rightIRActive) {
-		servoChangeRate[rightIRServo]=5;
+		servoChangeRate[rightIRServo]=1;
 		servo[rightIRServo]=RIGHT_SERVO_POS;
 	}else
-		servoChangeRate[rightIRServo]=0;
+		servoChangeRate[rightIRServo]=1;
 	if(leftIRActive){
-		servoChangeRate[leftIRServo]=5;
+		servoChangeRate[leftIRServo]=1;
 		servo[leftIRServo]=LEFT_SERVO_POS;
 	}else
-		servoChangeRate[leftIRServo]=0;
+		servoChangeRate[leftIRServo]=1;
 	if(liftAuto) {
 		int liftPos=nMotorEncoder[liftMotor];
 		int spd=LIFT_STOP;
