@@ -105,7 +105,7 @@ void loadVal() {
 	rc=normalize(rc);
 	rd=normalize(rd);
 	#ifdef AWD
-		applyAWD();
+		//applyAWD();
 	#endif
 	//write values to the motors
 	cDir(ra,rb,rc,rd);
