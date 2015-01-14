@@ -20,6 +20,8 @@
 #else
 #define iround(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #endif
+#define max(a,b) (a>b?a:b)
+#define max(a,b,c,d) (max(max(a,b),max(c,d)))
 
 
 
@@ -51,10 +53,7 @@ bool rightIRActive;
 unsigned int liftTarget;
 bool liftAuto;
 int rightHookPos;
-#ifdef AWD
-//for corrective drive
-int vecX, vecY, rotation;
-#endif
+float vecX, vecY, vecZ;
 //functiondec
 /**
  * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
@@ -70,48 +69,24 @@ void Stop();
  * @param (int)wD Motor power for wheel D
  */
 void cDir(int wA, int wB, int wC, int wD);
-
-//void cDir(float wA, float wB, float wC, float wD);
-/**
- * Moves motors immediately, and sets basket position.
- * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
- * You should be using addVal(int wA, int wB, int wC, int wD);
- * @param (int)wA Motor power for wheel A
- * @param (int)wB Motor power for wheel B
- * @param (int)wC Motor power for wheel C
- * @param (int)wD Motor power for wheel D
- * @param (int)lPos Position to send basket servo
- */
-//void cDir(int wA, int wB, int wC, int wD, int lpos);
-
-#if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_rotate)
-/**
- * Rotates at speed p.
- * NOTE: you probably shouldn't be using this function, because it doesn't support more complex movement (i.e., turning while moving forward).
- * You should be using addVal(int wA, int wB, int wC, int wD);
- * @param (int)p Speed to rotate
- */
-void rotate(int p);
 #endif
-/**
- * Wow... How do I describe this function?
- * @param (int)wA
- * @param (int)wB
- * @param (int)wC
- * @param (int)wD
- */
-void addVal(int wA, int wB, int wC, int wD);
 /**
  * Multiplies variables ra, rb, rc, and rd by (abs(mod2))/100f to normalize values over 100 while protecting ratios.
  * This should only really be called by loadVal().
  * @param mod2 percentage to modify values by.
  */
 int normalize(int mod2);
+void addRotation(int dRotation);
+void addRotation(float dRotation);
+void addVector(float x, float y);
+void addVector(int x, int y);
+void addMovement(float x, float y, float dRotation);
+void addMovement(int x, int y, int dRotation);
 /**
  * Pushes motor values to motors.
  * Normalizes values over 100 or under -100, and perserves ratios by using normalize()
  * Also outputs motor values to 1st 4 lines of display.
- * Finally resets ra-rd
+ * Finally resets vector variables
  */
 void loadVal();
 
