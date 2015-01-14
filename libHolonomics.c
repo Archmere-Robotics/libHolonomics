@@ -37,17 +37,7 @@ void cDir(int wA, int wB, int wC, int wD) {
 //for testing: rotates in place
 #define rotate(p) cDir(p,p,p,p)
 
-//fixes motor values
-int normalize(int mod2) {
-	if(abs(mod2)<MOTOR_MAX)return mod2;
-	float mod = MOTOR_MAX/((float)abs(mod2));
-	ra *= mod;
-	rb *= mod;
-	rc *= mod;
-	rd *= mod;
-	return mod2>0?MOTOR_MAX:-MOTOR_MAX;
-}
-#ifdef AWD
+#if defined(AWD)
 void applyAWD() {
 	vecX+=offX;
 	vecY+=offY;
@@ -75,16 +65,17 @@ void applyAWD() {
 
 //makes stuff happen
 void loadVal() {
-	#ifdef AWD
+	#if defined(AWD) && defined(sdfsdf)
 		applyAWD();
 	#endif
 	//convert vectors to motor values
-	float ra=-vecX-vecY+vecZ;
-	float rb= vecX-vecY+vecZ;
-	float rc= vecX+vecY+vecZ;
-	float rd=-vecX+vecY+vecZ;
+	float ra= vecX+vecY+vecZ;
+	float rb=-vecX+vecY+vecZ;
+	float rc=-vecX-vecY+vecZ;
+	float rd= vecX-vecY+vecZ;
 	//normalize values
-	if(float modifier=MOTOR_MAX/max(ra,rb,rc,rd)<1.0){
+	float modifier=abs(MOTOR_MAX/maxof4(ra,rb,rc,rd));
+	if(modifier<1.0){
 		ra*=modifier;
 		rb*=modifier;
 		rc*=modifier;
@@ -98,13 +89,18 @@ void loadVal() {
 	motor[collectorMotor]=conveyorSpeed;
 	#ifdef DEBUG_MOTOR_VALUES
 		//display motor values to screen
-		drawCircle(50+vecX,32+vecY,5);
-		drawLine(50+vecZ,63,50+vecZ,60);
+		float vdx=vecX*50/MOTOR_MAX;
+		float vdy=vecY*32/MOTOR_MAX;
+		float vdz=vecZ*50/MOTOR_MAX;
+		eraseDisplay();
+		bDisplayDiagnostics=false;
+		fillEllipse(46+vdx,28+vdy,54+vdx,36+vdy);
+		drawLine(50+vdz,64,50+vdz,56);
 	#endif
 	//reset internal motor values
 	vecX=0.0;
 	vecY=0.0;
-	vecX=0.0;
+	vecZ=0.0;
 }
 
 //updates servo values. call once per cycle
@@ -144,7 +140,10 @@ void updateServos() {
 	servo[rightHook]=rightHookPos;
 }
 void addRotation(int dRotation) {
-	vecZ+=dRotation;
+	if(dRotation>0)
+		vecZ+=dRotation;
+	else
+		vecZ-=abs(dRotation);
 }
 void addRotation(float dRotation) {
 	vecZ+=dRotation;

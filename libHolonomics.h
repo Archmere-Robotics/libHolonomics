@@ -20,8 +20,8 @@
 #else
 #define iround(x) ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #endif
-#define max(a,b) (a>b?a:b)
-#define max(a,b,c,d) (max(max(a,b),max(c,d)))
+#define maxof2(a,b) (a>b?a:b)
+#define maxof4(a,b,c,d) (maxof2(maxof2(a,b),maxof2(c,d)))
 
 
 
@@ -37,7 +37,7 @@
 #define CONVEYOR_DOWN -30
 #define RIGHT_SERVO_POS 0
 #define LEFT_SERVO_POS 31
-#define SWEEPER_POWER 100
+#define SWEEPER_POWER 75
 #define HOOK_POWER	30
 #define RIGHT_HOOK_UP 111
 #define RIGHT_HOOK_DOWN 33
@@ -53,7 +53,9 @@ bool rightIRActive;
 unsigned int liftTarget;
 bool liftAuto;
 int rightHookPos;
-float vecX, vecY, vecZ;
+float vecX;
+float vecY;
+float vecZ;
 //functiondec
 /**
  * Stops all motors. Note: Does NOT deactivate servos; you might want to see deactivateServos();
@@ -69,15 +71,13 @@ void Stop();
  * @param (int)wD Motor power for wheel D
  */
 void cDir(int wA, int wB, int wC, int wD);
-#endif
 /**
  * Multiplies variables ra, rb, rc, and rd by (abs(mod2))/100f to normalize values over 100 while protecting ratios.
  * This should only really be called by loadVal().
  * @param mod2 percentage to modify values by.
  */
-int normalize(int mod2);
-void addRotation(int dRotation);
 void addRotation(float dRotation);
+void addRotation(int dRotation);
 void addVector(float x, float y);
 void addVector(int x, int y);
 void addMovement(float x, float y, float dRotation);
