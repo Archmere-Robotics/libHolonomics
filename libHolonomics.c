@@ -92,6 +92,9 @@ void applyAWD() {
 
 //makes stuff happen
 void loadVal() {
+	#ifdef NEW_MOTION
+		//convert vector to motor values
+	#endif
 	#ifdef DEBUG_MOTOR_VALUES
 		//store values for display later
 		int oldA=ra,oldB=rb,oldC=rc,oldD=rd;
@@ -160,7 +163,19 @@ void updateServos() {
 	servoChangeRate[rightHook]=5;
 	servo[rightHook]=rightHookPos;
 }
-
+#if defined(NEW_MOTION)
+void addRotation(int dRotation){
+	rotation+=dRotation;
+}
+void addVector(int x, int y){
+	vecX+=x;
+	vecY+=y;
+}
+void addMovement(int x, int y, int dRotation){
+	addVector(x,y);
+	addRotation(dRotation);
+}
+#endif
 //returns lift position as integer
 #if defined(HOLO_DEBUG) || defined(USING_ALL) || defined(USING_igetLiftSpeed)
 int igetLiftSpeed() {

@@ -53,7 +53,7 @@ bool liftAuto;
 int rightHookPos;
 #ifdef AWD
 //for corrective drive
-int vecX, vecY, rotationOffset;
+int vecX, vecY, rotation;
 #endif
 //functiondec
 /**
