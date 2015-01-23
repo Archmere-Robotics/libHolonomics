@@ -152,9 +152,8 @@ void addVector(float x, float y) {
 	vecX+=x;
 	vecY+=y;
 }
-<<<<<<< HEAD
-void addMovement(float x, float y, float dRotation) {
-=======
+
+
 void addVector(int x, int y) {
 	vecX+=x;
 	vecY+=y;
@@ -164,7 +163,6 @@ void addMovement(float x, float y, float dRotation) {
 	addRotation(dRotation);
 }
 void addMovement(int x, int y, int dRotation) {
->>>>>>> beta
 	addVector(x,y);
 	addRotation(dRotation);
 }
