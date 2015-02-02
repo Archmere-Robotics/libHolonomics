@@ -114,12 +114,12 @@ void updateServos() {
 		servoChangeRate[dumpServo]=0;
 	if (rightIRActive) {
 		servoChangeRate[rightIRServo]=1;
-		servo[rightIRServo]=RIGHT_SERVO_POS;
+		servo[rightIRServo]=RIGHT_IR_UP;
 	} else
 		servoChangeRate[rightIRServo]=1;
 	if (leftIRActive) {
 		servoChangeRate[leftIRServo]=1;
-		servo[leftIRServo]=LEFT_SERVO_POS;
+		servo[leftIRServo]=LEFT_IR_UP;
 	} else
 		servoChangeRate[leftIRServo]=1;
 	if(liftAuto) {

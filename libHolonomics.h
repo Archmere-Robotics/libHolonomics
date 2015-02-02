@@ -35,8 +35,10 @@
 #define CONVEYOR_UP 30
 #define CONVEYOR_STOP 0
 #define CONVEYOR_DOWN -30
-#define RIGHT_SERVO_POS 0
-#define LEFT_SERVO_POS 31
+#define RIGHT_IR_UP 24 //0
+#define LEFT_IR_UP 31
+#define LEFT_IR_DOWN 245
+#define RIGHT_IR_DOWN 210 //233
 #define SWEEPER_POWER 75
 #define HOOK_POWER	30
 #define RIGHT_HOOK_UP 111
